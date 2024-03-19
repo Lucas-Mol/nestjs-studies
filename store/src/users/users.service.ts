@@ -1,30 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from './users.repository';
-import { User } from './user.entity';
-import { ListAllUserDTO } from './dto/listAllUser.dto';
-import { GetUserDTO } from './dto/getUser.dto';
+import { User } from './entities/user.entity';
+import { UserMemoryRepository } from './repositories/UserMemory.repository';
+import { OmittedResponseUser } from './dto/omitted-response-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(private readonly userRepository: UserMemoryRepository) {}
 
-  async createUser(user: User): Promise<User> {
+  async createUser(user: User): Promise<OmittedResponseUser> {
     return this.userRepository.save(user);
   }
 
-  async listAll(): Promise<ListAllUserDTO[]> {
+  async findAll(): Promise<OmittedResponseUser[]> {
     return this.userRepository.getAll();
   }
 
-  async getById(id: string): Promise<GetUserDTO> {
+  async findOne(id: string): Promise<OmittedResponseUser> {
     return this.userRepository.getById(id);
   }
 
-  async updateUser(id: string, data: Partial<User>): Promise<GetUserDTO> {
+  async update(id: string, data: Partial<User>): Promise<OmittedResponseUser> {
     return this.userRepository.update(id, data);
   }
 
-  async deleteUser(id: string) {
+  async delete(id: string) {
     return this.userRepository.delete(id);
   }
 }

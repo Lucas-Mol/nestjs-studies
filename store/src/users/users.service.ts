@@ -1,29 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './entities/user.entity';
-import { UserMemoryRepository } from './repositories/UserMemory.repository';
-import { OmittedResponseUser } from './dto/omitted-response-user.dto';
+import { UserTypeOrmRepository } from './repositories/UserTypeOrm.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly userRepository: UserMemoryRepository) {}
+  constructor(private readonly userRepository: UserTypeOrmRepository) {}
 
-  async createUser(user: User): Promise<OmittedResponseUser> {
-    return this.userRepository.save(user);
+  async createUser(user: User): Promise<User> {
+    return await this.userRepository.save(user);
   }
 
-  async findAll(): Promise<OmittedResponseUser[]> {
-    return this.userRepository.getAll();
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.getAll();
   }
 
-  async findOne(id: string): Promise<OmittedResponseUser> {
-    return this.userRepository.getById(id);
+  async findOne(id: string): Promise<User> {
+    return await this.userRepository.getById(id);
   }
 
-  async update(id: string, data: Partial<User>): Promise<OmittedResponseUser> {
+  async update(id: string, data: Partial<User>): Promise<User> {
     return this.userRepository.update(id, data);
   }
 
   async delete(id: string) {
     return this.userRepository.delete(id);
+  }
+
+  async hasWithEmail(email: string): Promise<boolean> {
+    return this.userRepository.hasWithEmail(email);
   }
 }

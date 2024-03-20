@@ -1,34 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../entities/user.entity';
-import { OmittedResponseUser } from '../dto/omitted-response-user.dto';
-import { UserNotFoundError } from '../exceptions/user-not-found.exception';
+import { UserRepository } from './UserRepository.interface';
 
 @Injectable()
-export class UserMemoryRepository {
+export class UserMemoryRepository implements UserRepository {
   private users: User[] = [];
 
-  async save(user: User): Promise<OmittedResponseUser> {
+  async save(user: User): Promise<User> {
     this.users.push(user);
-    return new OmittedResponseUser(user.id, user.name, user.email);
+    return user;
   }
 
-  async getAll(): Promise<OmittedResponseUser[]> {
-    const usersDTO: OmittedResponseUser[] = this.users.map(
-      (user) => new OmittedResponseUser(user.id, user.name, user.email),
-    );
-    return usersDTO;
+  async getAll(): Promise<User[]> {
+    return this.users;
   }
 
-  async getById(id: string): Promise<OmittedResponseUser> {
-    const foundUser = await this.findById(id);
-    return new OmittedResponseUser(
-      foundUser.id,
-      foundUser.name,
-      foundUser.email,
-    );
+  async getById(id: string): Promise<User> {
+    return await this.findById(id);
   }
 
-  async update(id: string, data: Partial<User>): Promise<OmittedResponseUser> {
+  async update(id: string, data: Partial<User>): Promise<User> {
     const foundUser = await this.findById(id);
 
     Object.entries(data).forEach(([key, value]) => {
@@ -36,21 +27,17 @@ export class UserMemoryRepository {
       foundUser[key] = value;
     });
 
-    return new OmittedResponseUser(
-      foundUser.id,
-      foundUser.name,
-      foundUser.email,
-    );
+    return foundUser;
   }
 
-  async delete(id: string) {
+  async delete(id: string): Promise<void> {
     const foundUser = await this.findById(id);
     this.users = this.users.filter((user) => user.id !== foundUser.id);
   }
 
-  async findById(id: string) {
+  private async findById(id: string) {
     const foundUser = this.users.find((user) => user.id === id);
-    if (!foundUser) throw new UserNotFoundError('User not found');
+    if (!foundUser) throw new Error('User not found');
     return foundUser;
   }
 

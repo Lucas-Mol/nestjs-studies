@@ -1,16 +1,32 @@
-import { v4 as uuid } from 'uuid';
-import { CreateUserDTO } from '../dto/create-user.dto';
+import {
+  Entity,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
+@Entity({ name: 'users' })
 export class User {
+  @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ name: 'name', length: 100, nullable: false })
   name: string;
+
+  @Column({ name: 'email', length: 70, nullable: false })
   email: string;
+
+  @Column({ name: 'password', length: 255, nullable: false })
   password: string;
 
-  constructor(createUserDTO: CreateUserDTO) {
-    this.id = uuid();
-    this.name = createUserDTO.name;
-    this.email = createUserDTO.email;
-    this.password = createUserDTO.password;
-  }
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: string;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: string;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt: string;
 }

@@ -5,15 +5,15 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { UserMemoryRepository } from '../repositories/UserMemory.repository';
+import { UsersService } from '../users.service';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
 export class IsEmailUniqueValidator implements ValidatorConstraintInterface {
-  constructor(private userRepository: UserMemoryRepository) {}
+  constructor(private readonly usersService: UsersService) {}
 
   async validate(value: any): Promise<boolean> {
-    const usuarioComEmailExiste = await this.userRepository.hasWithEmail(value);
+    const usuarioComEmailExiste = await this.usersService.hasWithEmail(value);
     return !usuarioComEmailExiste;
   }
   defaultMessage?(): string {

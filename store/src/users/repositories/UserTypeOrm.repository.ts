@@ -33,7 +33,7 @@ export class UserTypeOrmRepository implements UserRepository {
   }
 
   async hasWithEmail(email: string): Promise<boolean> {
-    const existedUser = await this.userRepository.findOne({
+    const existedUser: User = await this.userRepository.findOne({
       where: {
         email,
       },

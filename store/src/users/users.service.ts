@@ -3,10 +3,10 @@ import { User } from './entities/user.entity';
 import { UserTypeOrmRepository } from './repositories/UserTypeOrm.repository';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(private readonly userRepository: UserTypeOrmRepository) {}
 
-  async createUser(user: User): Promise<User> {
+  async create(user: User): Promise<User> {
     return await this.userRepository.save(user);
   }
 

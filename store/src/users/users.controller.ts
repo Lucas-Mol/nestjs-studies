@@ -7,7 +7,7 @@ import {
   Delete,
   Put,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UserService } from './users.service';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -15,7 +15,7 @@ import { OmittedResponseUser } from './dto/omitted-response-user.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   async create(@Body() data: CreateUserDTO) {
@@ -24,7 +24,7 @@ export class UsersController {
     user.email = data.email;
     user.password = data.password;
 
-    const persistedUser: User = await this.usersService.createUser(user);
+    const persistedUser: User = await this.userService.create(user);
     return new OmittedResponseUser(
       persistedUser.id,
       persistedUser.name,
@@ -34,7 +34,7 @@ export class UsersController {
 
   @Get()
   async findAll() {
-    const users: User[] = await this.usersService.findAll();
+    const users: User[] = await this.userService.findAll();
     return users.map(
       (user) => new OmittedResponseUser(user.id, user.name, user.email),
     );
@@ -42,7 +42,7 @@ export class UsersController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    const foundUser: User = await this.usersService.findOne(id);
+    const foundUser: User = await this.userService.findOne(id);
     return new OmittedResponseUser(
       foundUser.id,
       foundUser.name,
@@ -52,7 +52,7 @@ export class UsersController {
 
   @Put(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    const updatedUser: User = await this.usersService.update(id, updateUserDto);
+    const updatedUser: User = await this.userService.update(id, updateUserDto);
     return new OmittedResponseUser(
       updatedUser.id,
       updatedUser.name,
@@ -62,6 +62,6 @@ export class UsersController {
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    await this.usersService.delete(id);
+    await this.userService.delete(id);
   }
 }

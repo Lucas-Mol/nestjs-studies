@@ -1,59 +1,67 @@
 import {
-  Body,
   Controller,
-  Delete,
   Get,
-  Param,
   Post,
+  Body,
+  Param,
+  Delete,
   Put,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDTO } from './dto/createUser.dto';
-import { User } from './user.entity';
-import { GetUserDTO } from './dto/getUser.dto';
-import { UpdateUserDTO } from './dto/updateUser.dto';
-import { UserNotFoundError } from './errors/user-not-found.error';
+import { UserService } from './users.service';
+import { CreateUserDTO } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
+import { OmittedResponseUser } from './dto/omitted-response-user.dto';
 
-@Controller('/users')
+@Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Post()
   async create(@Body() data: CreateUserDTO) {
-    const user = new User(data);
-    await this.usersService.createUser(user);
-    return { user: new GetUserDTO(user.id, user.name, user.email) };
+    const user: User = new User();
+    user.name = data.name;
+    user.email = data.email;
+    user.password = data.password;
+
+    const persistedUser: User = await this.userService.create(user);
+    return new OmittedResponseUser(
+      persistedUser.id,
+      persistedUser.name,
+      persistedUser.email,
+    );
   }
 
   @Get()
-  async listAll() {
-    return await this.usersService.listAll();
+  async findAll() {
+    const users: User[] = await this.userService.findAll();
+    return users.map(
+      (user) => new OmittedResponseUser(user.id, user.name, user.email),
+    );
   }
 
-  @Get('/:id')
-  async getById(@Param('id') id: string) {
-    try {
-      return await this.usersService.getById(id);
-    } catch (error) {
-      if (error instanceof UserNotFoundError) return { error: error.message };
-    }
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const foundUser: User = await this.userService.findOne(id);
+    return new OmittedResponseUser(
+      foundUser.id,
+      foundUser.name,
+      foundUser.email,
+    );
   }
 
-  @Put('/:id')
-  async update(@Param('id') id: string, @Body() data: UpdateUserDTO) {
-    try {
-      return await this.usersService.updateUser(id, data);
-    } catch (error) {
-      if (error instanceof UserNotFoundError) return { error: error.message };
-    }
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const updatedUser: User = await this.userService.update(id, updateUserDto);
+    return new OmittedResponseUser(
+      updatedUser.id,
+      updatedUser.name,
+      updatedUser.email,
+    );
   }
 
-  @Delete('/:id')
-  async delete(@Param('id') id: string) {
-    try {
-      return await this.usersService.deleteUser(id);
-    } catch (error) {
-      if (error instanceof UserNotFoundError) return { error: error.message };
-    }
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    await this.userService.delete(id);
   }
 }

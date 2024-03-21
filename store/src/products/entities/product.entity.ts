@@ -3,19 +3,21 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ProductAttribute } from './product-attribute.entity';
 import { ProductImage } from './product-image.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Entity({ name: 'products' })
 export class Product {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'user_id', length: 100, nullable: false })
+  @ManyToOne(() => User, (user) => user.id)
   userId: string;
 
   @Column({ name: 'name', length: 100, nullable: false })

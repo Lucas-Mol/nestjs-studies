@@ -17,7 +17,7 @@ ALTER  TABLE  IF  EXISTS  public.users  OWNER  to  root;
 CREATE  TABLE  IF  NOT  EXISTS  public.products
   (
   id uuid NOT NULL  DEFAULT uuid_generate_v4(),
-  user_id character varying(100) COLLATE pg_catalog."default"  NOT NULL,
+  user_id uuid COLLATE pg_catalog."default"  NOT NULL,
   name character varying(100) COLLATE pg_catalog."default"  NOT NULL,
   price integer  NOT NULL,
   amount integer  NOT NULL,
@@ -36,9 +36,9 @@ CREATE  TABLE  IF  NOT  EXISTS  public.product_attributes
   id uuid NOT NULL  DEFAULT uuid_generate_v4(),
   name character varying(100) COLLATE pg_catalog."default"  NOT NULL,
   description character varying(255) COLLATE pg_catalog."default"  NOT NULL,
-  "productId" uuid,
+  product_id uuid,
   CONSTRAINT  "PK_132816ff55e30a6bf554c9e2545"  PRIMARY KEY (id),
-  CONSTRAINT  "FK_67339e59ab4b3ed091cf318f426"  FOREIGN KEY ("productId")
+  CONSTRAINT  "FK_67339e59ab4b3ed091cf318f426"  FOREIGN KEY (product_id)
   REFERENCES  public.products (id) MATCH SIMPLE
   ON  UPDATE CASCADE
   ON DELETE CASCADE
@@ -51,9 +51,9 @@ CREATE  TABLE  IF  NOT  EXISTS  public.product_images
   id uuid NOT NULL  DEFAULT uuid_generate_v4(),
   url  character varying(100) COLLATE pg_catalog."default"  NOT NULL,
   description character varying(100) COLLATE pg_catalog."default"  NOT NULL,
-  "productId" uuid,
+  product_id uuid,
   CONSTRAINT  "PK_d1cf326e8d58dbc469bd7fe2f32"  PRIMARY KEY (id),
-  CONSTRAINT  "FK_eb1531605709dd94ec67b2141d0"  FOREIGN KEY ("productId")
+  CONSTRAINT  "FK_eb1531605709dd94ec67b2141d0"  FOREIGN KEY (product_id)
   REFERENCES  public.products (id) MATCH SIMPLE
   ON  UPDATE CASCADE
   ON DELETE CASCADE

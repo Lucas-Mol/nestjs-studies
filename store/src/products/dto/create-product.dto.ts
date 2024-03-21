@@ -11,8 +11,11 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+import { Product } from '../entities/product.entity';
 
 export class ProductAttributeDTO {
+  id: string;
+
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -20,15 +23,21 @@ export class ProductAttributeDTO {
   @IsString()
   @IsNotEmpty()
   description: string;
+
+  product: Product;
 }
 
 export class ProductImageDTO {
+  id: string;
+
   @IsUrl()
   url: string;
 
   @IsString()
   @IsNotEmpty()
   description: string;
+
+  product: Product;
 }
 
 export class CreateProductDto {
@@ -54,7 +63,7 @@ export class CreateProductDto {
 
   @ValidateNested()
   @IsArray()
-  @ArrayMinSize(3)
+  @ArrayMinSize(1)
   @Type(() => ProductAttributeDTO)
   attributes: ProductAttributeDTO[];
 
